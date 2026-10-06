@@ -1,0 +1,11 @@
+"THE BEER-WARE LICENSE" (Revision 42):
+
+DL8UG <https://github.com/DL8UG> wrote this file. As long as you retain this
+notice you can do whatever you want with this stuff. If we meet some day, and
+you think this stuff is worth it, you can buy me a beer in return. DL8UG
+
+This applies to the firmware, the tools and the documentation in this
+repository, except for the third-party parts listed in README.md
+("Credits"), which keep their own licenses: the audio codec component in
+components/codec_board/ (ESPRESSIF MIT License) and the fonts in fonts/
+(see fonts/README.md).

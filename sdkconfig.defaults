@@ -1,0 +1,37 @@
+# Waveshare ESP32-S3-ePaper-1.54 (ESP32-S3-PICO-1-N8R8: 8MB flash, 8MB octal PSRAM)
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_IDF_TARGET_ESP32S3=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
+
+# Use our own partitions.csv (a 4MB app partition, still well under this
+# board's 8MB flash) - without these two lines ESP-IDF silently falls back
+# to its own small built-in default table and ignores the file in the
+# project root.
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Native USB (USB-Serial/JTAG in the chip itself, no bridge chip) - any
+# reset drops the whole USB link and it has to fully re-enumerate.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# app_main() does the board-power bring-up, e-paper driver init (deep SPI
+# call chain), and kicks off WiFi/Pushover/button/audio directly on its own
+# task - the IDF default (3584) has been seen to overflow from that
+# combination.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# TLS to api.pushover.net / client.pushover.net with no embedded
+# certificate - verified against ESP-IDF's CA bundle.
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_MAX_CERTS=200
+
+# The esp_timer task renders the display too (clock tick every minute,
+# return to the home screen) - more headroom than the default 3584.
+CONFIG_ESP_TIMER_TASK_STACK_SIZE=4096

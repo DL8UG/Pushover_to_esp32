@@ -1,0 +1,14 @@
+name: Feature request
+description: An idea for the firmware or the display
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What for? How do you use the device today?

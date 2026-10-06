@@ -1,0 +1,53 @@
+# On a tag vX.Y.Z: build the firmware and create a DRAFT release with the
+# images. The notes come from CHANGELOG.md; check them and publish the
+# draft by hand. The images contain placeholder credentials only - flash
+# them, then build your own with main/secrets.h (see README).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Placeholder credentials
+        run: cp main/secrets.h.example main/secrets.h
+
+      - name: Firmware
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5.1
+          target: esp32s3
+          command: >-
+            idf.py build &&
+            cd build && python -m esptool --chip esp32s3 merge_bin -o merged.bin @flash_args
+
+      - name: Assets
+        run: |
+          tag=${GITHUB_REF_NAME}
+          mkdir dist
+          b=build
+          cp $b/merged.bin dist/pushover_to_esp32-$tag-merged.bin
+          cp $b/pushover_to_esp32.bin dist/pushover_to_esp32-$tag-app.bin
+          cp LICENSE dist/
+          v=${tag#v}
+          awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > notes.md
+          test -s notes.md || echo "See CHANGELOG.md." > notes.md
+
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=${GITHUB_REF_NAME}
+          pre=""
+          case "$tag" in v0.*|*-*) pre="--prerelease" ;; esac
+          gh release create "$tag" dist/* --draft $pre --title "Pushover_to_esp32 $tag" --notes-file notes.md

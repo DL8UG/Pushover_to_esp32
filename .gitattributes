@@ -1,0 +1,5 @@
+# generated font tables and font sources: no text diffs, collapsed in reviews
+main/fonts_data.cpp -diff linguist-generated
+fonts/*.bdf -diff linguist-vendored
+# third-party board support code
+components/** linguist-vendored

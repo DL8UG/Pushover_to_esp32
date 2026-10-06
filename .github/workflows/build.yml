@@ -1,0 +1,45 @@
+# Display simulator and the ESP-IDF firmware build
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fonts are up to date
+        run: python3 tools/fontgen.py && git diff --exit-code main/fonts.h main/fonts_data.cpp
+      - run: make -C test/sim
+      - uses: actions/upload-artifact@v7
+        with:
+          name: screens
+          path: test/sim/build/*.png
+
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0    # git describe gives the firmware version
+      - name: Placeholder credentials
+        run: cp main/secrets.h.example main/secrets.h
+      - uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5.1
+          target: esp32s3
+          command: idf.py build    # the action sets safe.directory itself
+      - uses: actions/upload-artifact@v7
+        with:
+          name: firmware
+          path: |
+            build/pushover_to_esp32.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/flash_args

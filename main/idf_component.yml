@@ -1,0 +1,8 @@
+dependencies:
+  idf:
+    version: ">=5.5.0"
+
+  # esp_codec_dev (for the ES8311 audio codec) comes in through the
+  # codec_board component's own idf_component.yml.
+  espressif/esp_websocket_client:
+    version: "^1"

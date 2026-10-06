@@ -1,0 +1,21 @@
+# WiFi + Pushover credentials - never committed, see main/secrets.h.example
+main/secrets.h
+
+# ESP-IDF build output and component-manager cache
+build/
+managed_components/
+dependencies.lock
+sdkconfig
+sdkconfig.old
+
+# display simulator output
+test/sim/build/
+
+# misc
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
+.vscode/
+.idea/
+.cache/
