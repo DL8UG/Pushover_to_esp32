@@ -40,7 +40,8 @@ jobs:
           cp $b/pushover_to_esp32.bin dist/pushover_to_esp32-$tag-app.bin
           cp LICENSE dist/
           v=${tag#v}
-          awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > notes.md
+          # the version's section, without the "[x.y.z]: url" link lines at the end
+          awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ || /^\[[^]]*\]: / {on=0} on' CHANGELOG.md > notes.md
           test -s notes.md || echo "See CHANGELOG.md." > notes.md
 
       - name: Draft release
